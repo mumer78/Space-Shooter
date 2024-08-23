@@ -1,0 +1,213 @@
+import pygame
+
+game_window = pygame.image.load("C:\\Users\\LENOVO\\Desktop\\sp.jpg")
+pygame.display.set_caption("DODGE THE BOMB (CREATED BY UMER)")
+breath , height = 500,400
+screen_display = pygame.display.set_mode((breath, height))
+run = True  # for running main loop(while) to create quit button
+pygame.init()  # initializing pygame lib
+
+HOTPINK = (227,21,127)
+BLACK = (18,19,19)
+
+score = 0
+gameend = False
+game_over = False
+hit_jet = False
+font_score = pygame.font.SysFont("Nordic Light", 20)
+
+max_lives = 10
+lives = max_lives
+
+lives_font = pygame.font.SysFont("Nordic Lightn", 20)
+
+pygame.mixer.music.load("C:\\Users\\LENOVO\\Desktop\\pygame\\music.mp3")
+pygame.mixer.music.play(-1)
+
+collided = False
+
+import random
+class ONE:  # 1st class of 4 objects falling from above
+    def __init__(self, img):
+        self.image = pygame.image.load(img)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 5, self.image.get_height() // 5)) # lessen the size of the image by 10x to fit in the desired display
+        self.rect = self.image.get_rect()  # to add rectangle around it so we could add collision
+        self.rect.x = random.randint(50, breath - self.rect.height - 50)  # so it doesn't go out of screen width
+        self.rect.y = random.randint(-200, -100)  # it gives object starting position from start of screen
+        self.speed_y = random.uniform(0, 2)  # it sets speed of on random based values
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.top >= height:
+            self.rect.y = random.randint(-190, -50)
+            self.rect.x = random.randint(0, breath - self.rect.height)
+            self.speed_y = random.uniform(0, 2)
+        elif self.rect.bottom > jet_rect.top and not jet_rect.colliderect(self.rect):
+            global score
+            score += 0.5
+
+
+one_object = ONE("C:\\Users\\LENOVO\\Desktop\\pygame\\file.png")
+
+class TWO:
+    def __init__(self, img):
+        self.image = pygame.image.load(img)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 5, self.image.get_height() // 5))
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, breath - self.rect.height)
+        self.rect.y = random.randint(-120, -40)
+        self.speed_y = random.uniform(1, 3)
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.top > height:
+            self.rect.y = random.randint(-100, -50)
+            self.rect.x = random.randint(0, breath - self.rect.height)
+            self.speed_y = random.uniform(1, 3)
+        elif  self.rect.bottom > jet_rect.top and not jet_rect.colliderect(self.rect):
+            global score
+            score += 0.5
+
+two_object = TWO("C:\\Users\\LENOVO\\Desktop\\pygame\\file.png")
+
+class THREE:
+    def __init__(self, img):
+        self.image = pygame.image.load(img)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 5, self.image.get_height() // 5))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = random.randint(0, breath - self.rect.height)
+        self.rect.y = random.randint(-100, -50)
+        self.speed_y = random.uniform(1, 3)
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.top > height:
+            self.rect.y = random.randint(-100, -50)
+            self.rect.x = random.randint(0, breath - self.rect.height)
+            self.speed_y = random.uniform(1, 3)
+
+        elif self.rect.bottom > jet_rect.top and not jet_rect.colliderect(self.rect):
+            global score
+            score += 0.5
+
+three_object = THREE("C:\\Users\\LENOVO\\Desktop\\pygame\\file.png")
+
+class FOUR:
+    def __init__(self, img):
+        self.image = pygame.image.load(img)
+        self.image = pygame.transform.scale(self.image, (self.image.get_width() // 5, self.image.get_height() // 5))
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randint(0, breath - self.rect.height)
+        self.rect.y = random.randint(-100, -50)
+        self.speed_y = random.uniform(1, 3)
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.top > height:
+            self.speed_y = random.uniform(1, 3)
+            self.rect.x = random.randint(0, breath - self.rect.height)
+            self.rect.y = random.randint(-100, -50)
+
+        elif  self.rect.bottom > jet_rect.top and not jet_rect.colliderect(self.rect):
+            global score
+            score += 0.5
+four_object = FOUR("C:\\Users\\LENOVO\\Desktop\\pygame\\file.png")
+
+def check_collision_circular(obj1, obj2):
+    radius1 = obj1.image.get_width() // 2
+    radius2 = obj2.image.get_width() // 2
+    distance = math.sqrt((obj1.rect.centerx - obj2.rect.centerx)*2 + (obj1.rect.centery - obj2.rect.centery)*2)
+    if distance < radius1 + radius2:
+        return True
+    else:
+        return False
+
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+
+# JET
+jet_photo = pygame.image.load("C:\\Users\\LENOVO\\Desktop\\spaceship.1.png")  # character img
+jet_photo = pygame.transform.scale(jet_photo, (jet_photo.get_width() // 15, jet_photo.get_height() // 15))  # making the size small to fit into my screen
+jet_rect = jet_photo.get_rect()
+jet_speed = 8
+jet_rect.bottom = height  # positioning player height from where to start
+jet_rect.centerx= breath  # positioning player breath
+# p_speed = 8
+
+import math
+while not game_over:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            game_over = True
+        elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            game_over = True
+
+    if lives <= 0:  # Check if lives reach zero
+        game_over = True
+
+
+    mouse_x, mouse_y = pygame.mouse.get_pos()    # movemennt
+
+    # player position based on mouse movement
+    if 0 <= mouse_x <= breath - jet_rect.width:
+        jet_rect.centerx = mouse_x
+    else:
+        if mouse_x < 0:
+            jet_rect.left = 0
+        elif mouse_x > breath - jet_rect.width:
+            jet_rect.right = breath
+
+
+    if not hit_jet:  # Only check collision if player hasn't been hit yet
+        for obj in [one_object, two_object, three_object, four_object]:
+            if jet_rect.colliderect(obj.rect):
+                lives -= 1
+                hit_jet = True  # Set to True to indicate player has been hit
+                if lives == 0:
+                    print("SPACESHIP IS NO MORE!") # terminate when lives become 0
+                    run = False
+
+    # Check if the player was hit and none of the objects are colliding with the player
+    if hit_jet and not any(
+            jet_rect.colliderect(obj.rect) for obj in [one_object, two_object, three_object, four_object]):
+        hit_jet = False
+
+
+    blast_sound = pygame.mixer.Sound("C:\\Users\\LENOVO\\Desktop\\pygame\\blast.wav")
+
+    for obj in [one_object, two_object, three_object, four_object]:
+        # Check if there's a collision between the player and the current object
+        if jet_rect.colliderect(obj.rect):
+            # Play the blast sound, allowing multiple simultaneous instances
+            blast_sound.play()
+
+
+
+    pygame.display.flip()
+                                                # update the screen
+    screen_display.blit(game_window, (-5, -5))
+    screen_display.blit(jet_photo, jet_rect)
+
+    # display score n lives on screen
+    score_text = font_score.render("SCORE: " + str(score), True, 	(255,255,255))
+    screen_display.blit(score_text, (breath - score_text.get_width() - 10, 12))
+
+    lives_text = lives_font.render("LIVES: " + str(lives), True, 	(255,255,255))
+    screen_display.blit(lives_text, (breath - score_text.get_width() - 310, 12))
+
+
+    one_object.update()
+    two_object.update()
+    three_object.update()
+    four_object.update()
+
+    screen_display.blit(four_object.image, four_object.rect)
+    screen_display.blit(one_object.image, one_object.rect)
+    screen_display.blit(two_object.image, two_object.rect)
+    screen_display.blit(three_object.image, three_object.rect)
+
+
+    clock = pygame.time.Clock()
+    clock.tick(90)
+    pygame.display.flip()
